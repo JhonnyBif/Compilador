@@ -50,6 +50,7 @@ def process_lexema(lexema, tokens, lexemas, espacos):
         lexemas.append(lexema)
     else:
         # Caso não esteja no mapeamento, verifica se o lexema é relevante
+        #QUER DIZER QUE O LEXEMA É UMA PALAVRA RESERVADA
         if lexema not in espacos and len(lexema) > 0:
             tokens.append(16)
             lexemas.append(lexema)
@@ -58,7 +59,8 @@ def process_lexema(lexema, tokens, lexemas, espacos):
     return ''
 
 #entrada, geralmente vem de um arquivo texto
-palavra = "program endor \n begin write (@@number@@) ; end "
+# palavra = "program endor \n begin write (@@number@@) ; end "
+palavra = "program write (@teste@@) ; end"
 #variavel para armazenar o lexema 
 lexema = ''
 tokens = []
@@ -70,13 +72,11 @@ string= False
 char= False
 literal= False
 literalFirst= False
-literalSecond= False
-literalThird = False
 lines = 0
 error =False
 
 espacos = [ ' ', '\t', '\n']
-print(palavra)
+# print(palavra)
 
 for i in range(len(palavra)): #percorre a entrada
     if palavra[i].__contains__('\n') :
@@ -112,21 +112,15 @@ for i in range(len(palavra)): #percorre a entrada
                 lexema = palavra[i]
                 
         elif palavra[i] == "@":
-            if(literalFirst and literalSecond == False) :
-                literalSecond = True
-            elif (literalFirst and literalSecond and literalThird == False) :
-                literalThird = True
-            elif (literalThird) :
+            if(literalFirst) :
                 tokens.append(13)
                 lexemas.append(lexema)
                 lexema = ''
-                literalSecond = False
                 literalFirst = False
             else :
                 string= False
                 char=False
                 literalFirst = True
-                literalSecond = False
                 lexema = palavra[i]
                 
         elif palavra[i] == "(" :
@@ -150,6 +144,7 @@ for i in range(len(tokens)) :
     print('Token: '+str(tokens[i]) + ' - Lexema: '+str(lexemas[i]) + ' - Linha:'+str(lines) )
     
     
+#-----------------------CODIGO ANTIGO--------------------------------
 
  # if lexema == 'program':
         #     tokens.append(9) 
