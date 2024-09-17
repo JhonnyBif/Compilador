@@ -49,9 +49,9 @@ token_map = {
 
 def error(type, line):
     if type == 'string' :
-        print('Error String Too Long, Length > 10 - Linha:', line)
+        print('Error String Too Long, Length > 5 - Linha:', line)
     elif type == 'literal':
-        print('Error Literal Too Long, Length > 10 - Line:', line)
+        print('Error Literal Too Long, Length > 5 - Line:', line)
     elif type == 'char':
         print('Error Char Too Long, Length > 1, - Linha:', line)
     elif type == 'realBefore':
@@ -60,6 +60,10 @@ def error(type, line):
         print('Error real number > 2 digits after the divisor - Line:', line)
     elif type == 'number':
         print('Error number > 5 digits - Line', line)
+    elif type == 'identificadorLength':
+        print('Error identificador Too Long, Length > 5. - Line', line)
+    elif type == 'identificadorStartDigit':
+        print('Error identificador Start with number. - Line', line)
     
 
 def process_lexema(lexema, tokens, lexemas, espacos):
@@ -71,6 +75,10 @@ def process_lexema(lexema, tokens, lexemas, espacos):
         # Caso não esteja no mapeamento, verifica se o lexema é relevante
         #QUER DIZER QUE O LEXEMA É UMA PALAVRA RESERVADA
         if lexema not in espacos and len(lexema) > 0:
+            if len(lexema) >5:
+                error('identificadorLength', lines)
+            if lexema[0].isdigit() :
+                error('identificadorStartDigit', lines)
             tokens.append(16)
             lexemas.append(lexema)
 
@@ -98,7 +106,7 @@ for i in range(len(palavra)):
     if palavra[i] not in espacos and i != len(palavra) -1 :
         lexema = lexema + palavra[i]
         if palavra[i] == '"':
-            if(len(lexema) >10) :
+            if(len(lexema) >5) :
                 error('string', lines)
                 break
             if(string) :
@@ -128,7 +136,7 @@ for i in range(len(palavra)):
                 lexema = ''
                 
         elif palavra[i] == "@":
-            if(len(lexema) >10) :
+            if(len(lexema) >5) :
                 error('literal', lines)
                 break
             if(literalFirst) :
