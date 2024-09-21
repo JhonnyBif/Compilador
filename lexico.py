@@ -1,6 +1,7 @@
 import numpy as np
+import re
 
-with open('exemplo1.txt', 'r') as file:
+with open('exemplo01.txt', 'r') as file:
     palavra = file.read()
 
 token_map = {
@@ -47,42 +48,38 @@ token_map = {
     '-': 52
 }
 
-def error(type, line):
+def error(type, line, lexema):
     if type == 'string' :
-        print('Error String Too Long, Length > 5 - Linha:', line)
+        print('Error String Too Long, Length > 5 . ',lexema,',Line', line)
     elif type == 'literal':
-        print('Error Literal Too Long, Length > 5 - Line:', line)
+        print('Error Literal Too Long, Length > 5.  ',lexema,',Line', line)
     elif type == 'char':
-        print('Error Char Too Long, Length > 1, - Linha:', line)
+        print('Error Char Too Long, Length > 1.  ',lexema,',Line', line)
     elif type == 'realBefore':
-        print('Error real number > 5 digits before the divisor - Line:', line)
+        print('Error real number > 5 digits before the divisor.  ',lexema,',Line', line)
     elif type == 'realAfter':
-        print('Error real number > 2 digits after the divisor - Line:', line)
+        print('Error real number > 2 digits after the divisor.  ',lexema,',Line', line)
     elif type == 'number':
-        print('Error number > 5 digits - Line', line)
+        print('Error number > 5 digits. ',lexema,' Line', line)
     elif type == 'identificadorLength':
-        print('Error identificador Too Long, Length > 5. - Line', line)
+        print('Error identificador Too Long, Length > 10. ',lexema,',Line', line)
     elif type == 'identificadorStartDigit':
-        print('Error identificador Start with number. - Line', line)
+        print('Error identificador Start with number.  ',lexema,',Line', line)
     
 
 def process_lexema(lexema, tokens, lexemas, espacos):
-    # Verifica se o lexema está no mapeamento e adiciona o token correspondente
     if lexema in token_map:
         tokens.append(token_map[lexema])
         lexemas.append(lexema)
     else:
-        # Caso não esteja no mapeamento, verifica se o lexema é relevante
         #QUER DIZER QUE O LEXEMA É UMA PALAVRA RESERVADA
         if lexema not in espacos and len(lexema) > 0:
-            if len(lexema) >5:
-                error('identificadorLength', lines)
+            if len(lexema) >10:
+                error('identificadorLength', lines, lexema)
             if lexema[0].isdigit() :
-                error('identificadorStartDigit', lines)
+                error('identificadorStartDigit', lines, lexema)
             tokens.append(16)
             lexemas.append(lexema)
-
-    # Reseta o lexema após o processamento
     return ''
 
 lexema = ''
@@ -94,35 +91,45 @@ string= False
 char= False
 literal= False
 literalFirst= False
-lines = 0
+lines = 1
 number = False
-
+especiais = ['>','=','<','+',']','[',';',':','/','.',',','*',')','(','-']
 espacos = [ ' ', '\t', '\n']
+regex = f"[{''.join(re.escape(e) for e in especiais)}]"
 print(palavra)
 
 for i in range(len(palavra)):
     if palavra[i].__contains__('\n') :
         lines += 1
+    if palavra[i] in especiais and palavra[i] not in espacos:
+        primeira = lexema.split(palavra[i])
+        segunda = palavra[i]
+        lexema = str(primeira[0]) + ' ' + str(segunda)
+        lexema = process_lexema(primeira[0], tokens, lexemas, espacos)
+        lexema = process_lexema(segunda, tokens, lexemas, espacos)
+        lexema = ''
+        continue
+    # print(palavra[i])
     if palavra[i] not in espacos and i != len(palavra) -1 :
         lexema = lexema + palavra[i]
         if palavra[i] == '"':
-            if(len(lexema) >5) :
-                error('string', lines)
+            if(len(lexema.split('"')[0]) >5) :
+                error('string', lines, lexema)
                 break
             if(string) :
                 tokens.append(5)
-                lexemas.append(lexema)
+                lexemas.append(lexema.split('"')[0])
                 string= False
                 lexema = ''
             else :
                 string= True
                 char= False
                 literal= False
-                lexema = palavra[i]
+                lexema = ''
                 
         elif palavra[i] == "'":
             if(len(lexema) >2) :
-                error('char', lines)
+                error('char', lines, lexema)
                 break
             elif(char) :
                 tokens.append(24)
@@ -136,20 +143,16 @@ for i in range(len(palavra)):
                 lexema = ''
                 
         elif palavra[i] == "@":
-            if(len(lexema) >5) :
-                error('literal', lines)
-                break
             if(literalFirst) :
                 tokens.append(13)
-                lexemas.append(lexema)
+                lexemas.append(lexema.split("@")[0])
                 lexema = ''
                 literalFirst = False
             else :
                 string= False
                 char=False
                 literalFirst = True
-                lexema = palavra[i]
-                
+                lexema = ''   
         elif palavra[i] == "(" :
             tokens.append(50)
             lexemas.append(lexema)
@@ -180,10 +183,10 @@ for i in range(len(palavra)):
                     if '.' in lexema and '..' not in lexema:
                         real = lexema.split('.')
                         if len(real[0]) > 5:
-                            error('realBefore', lines)
+                            error('realBefore', lines, lexema)
                             break
                         elif len(real[1]) > 2:
-                            error('realAfter', lines)
+                            error('realAfter', lines, lexema)
                             break
                         else:
                             tokens.append(36)
@@ -191,7 +194,7 @@ for i in range(len(palavra)):
                             lexema = ''
                     elif  '..' not in lexema:
                         if len(lexema) > 5:
-                            error('number',lines )
+                            error('number',lines, lexema)
                             break
                         else:
                             tokens.append(37)
@@ -200,9 +203,30 @@ for i in range(len(palavra)):
                             number = False
             else:
                 number = True
+                
+    elif string:
+        lexema = lexema + palavra[i]
+        print(lexema)
+        if palavra[i] == '"' :
+            if(len(lexema.split('"')[0]) >5) :
+                error('string', lines, lexema)
+                break
+            else :
+                tokens.append(5)
+                lexemas.append(lexema.split('"')[0])
+                string= False
+                lexema = ''
+    elif literalFirst:
+        lexema = lexema + palavra[i]
+        if palavra[i] == '@' :
+            tokens.append(13)
+            lexemas.append(lexema.split("@")[0])
+            lexema = ''
+            literalFirst = False
     else:
-        if not palavra[i].__contains__('\n') :
+        if palavra[i] not in espacos :
             lexema = lexema+palavra[i]
+            
         lexema = process_lexema(lexema, tokens, lexemas, espacos)
 
        
