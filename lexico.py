@@ -1,7 +1,7 @@
 import numpy as np
 import re
 
-with open('exemplo01.txt', 'r') as file:
+with open('exemplo03.txt', 'r') as file:
     palavra = file.read()
 
 token_map = {
@@ -45,6 +45,8 @@ token_map = {
     '.': 46,
     ',': 47,
     '*': 48,
+    '(': 50,
+    ')': 51,
     '-': 52
 }
 
@@ -101,7 +103,14 @@ print(palavra)
 for i in range(len(palavra)):
     if palavra[i].__contains__('\n') :
         lines += 1
-    if palavra[i] in especiais and palavra[i] not in espacos:
+    if palavra[i] in especiais and palavra[i] not in espacos and (literalFirst == False and string == False and number == False) and not palavra[i].isdigit():
+        if palavra[i] == "." and i != len(palavra) -1 and palavra[i+1] == ".":
+            tokens.append(45)
+            lexemas.append('..')
+            lexema = ''
+            continue
+        elif palavra[i] == "." and i != len(palavra) -1 and palavra[i+1] != ".":
+            continue
         primeira = lexema.split(palavra[i])
         segunda = palavra[i]
         lexema = str(primeira[0]) + ' ' + str(segunda)
@@ -109,8 +118,7 @@ for i in range(len(palavra)):
         lexema = process_lexema(segunda, tokens, lexemas, espacos)
         lexema = ''
         continue
-    # print(palavra[i])
-    if palavra[i] not in espacos and i != len(palavra) -1 :
+    if palavra[i] not in espacos and i != len(palavra) -1 and (literalFirst == False and string == False):
         lexema = lexema + palavra[i]
         if palavra[i] == '"':
             if(len(lexema.split('"')[0]) >5) :
@@ -201,6 +209,13 @@ for i in range(len(palavra)):
                             lexemas.append(lexema)
                             lexema = ''
                             number = False
+            elif palavra[i+1] == '.' and '.' not in lexema:
+                number = True
+                continue
+            elif not palavra[i+1].isdigit():
+                tokens.append(37)
+                lexemas.append(lexema)
+                lexema = ''
             else:
                 number = True
                 
@@ -226,8 +241,8 @@ for i in range(len(palavra)):
     else:
         if palavra[i] not in espacos :
             lexema = lexema+palavra[i]
-            
         lexema = process_lexema(lexema, tokens, lexemas, espacos)
+        
 
        
 
