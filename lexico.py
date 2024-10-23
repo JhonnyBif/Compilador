@@ -1,7 +1,8 @@
 import numpy as np
 import re
+import sintatico
 
-with open('exemplo03.txt', 'r') as file:
+with open('exemplo01.txt', 'r') as file:
     palavra = file.read()
 
 token_map = {
@@ -248,11 +249,11 @@ for i in range(len(palavra)):
 
 #salvar do lexico para entregar para o sintático
 tokens = np.array(tokens) #converte lista do python para numpy array
-print(tokens)
-for i in range(len(tokens)) :
-    print('Token: '+str(tokens[i]) + ' - Lexema: '+str(lexemas[i]) + ' - Linha:'+str(lines) )
+# print(tokens)
+# for i in range(len(tokens)) :
+#     print('Token: '+str(tokens[i]) + ' - Lexema: '+str(lexemas[i]) + ' - Linha:'+str(lines) )
     
-    
+sintatico.sintatico(tokens)   
 #-----------------------CODIGO ANTIGO--------------------------------
 
  # if lexema == 'program':
