@@ -76,6 +76,41 @@ def getProducoes():
     producoes = np.append(producoes, [[47, 16, 71, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]], axis=0)    # P72: <REPVARIAVEL>    ::= "," "identificador" <REPVARIAVEL>
     producoes = np.append(producoes, [[17, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]], axis=0)    # P73: <REPVARIAVEL>    ::= î
     
+    #FIRST
+    
+    
+#     FIRST(<PROGRAMA>): { "program" }
+    # FIRST(<BLOCO>): { "const", "declaravariaveis", "procedure", "begin" }
+    # FIRST(<DCLCONST>): { "const", ε }
+    # FIRST(<LDCONST>): { "identificador", ε }
+    # FIRST(<DCLVAR>): { "declaravariaveis", ε }
+    # FIRST(<LID>): { "identificador" }
+    # FIRST(<REPIDENT>): { ",", ε }
+    # FIRST(<LDVAR>): { "identificador", ε }
+    # FIRST(<TIPO>): { "array", "integer", "char", "string", "real" }
+    # FIRST(<TIPOARRAY>): { "integer", "char", "string", "real" }
+    # FIRST(<DCLPROC>): { "procedure", ε }
+    # FIRST(<DEFPAR>): { "(", ε }
+    # FIRST(<CORPO>): { "begin" }
+    # FIRST(<COMANDO>): { "if", "while", "repeat", "read", "chamaprocedure", "write", "for", ε }
+    # FIRST(<REPCOMANDO>): { "if", "while", "repeat", "read", "chamaprocedure", "write", "for", ε }
+    # FIRST(<ELSEPARTE>): { "else", ε }
+    # FIRST(<VARIAVEL>): { "identificador" }
+    # FIRST(<REPVARIAVEL>): { ",", ε }
+    # FIRST(<EXPRESSAO>): { "numinteiro", "identificador", "nomestring", "nomechar", "numreal", "(" }
+    # FIRST(<TERMO>): { "numinteiro", "identificador", "nomestring", "nomechar", "numreal", "(" }
+    # FIRST(<FATOR>): { "numinteiro", "identificador", "nomestring", "nomechar", "numreal", "(" }
+    # FIRST(<REPEXPSIMP>): { "=", "<", ">", ">=", "<=", "<>", ε }
+    # FIRST(<EXPSIMP>): { "numinteiro", "identificador", "nomestring", "nomechar", "numreal", "(", "+", "-" }
+    # FIRST(<REPEXP>): { "+", "-", "or", ε }
+    # FIRST(<REPTERMO>): { "*", "/", "and", ε }
+    # FIRST(<ITEMSAIDA>): { "literal", "numinteiro", "identificador", "nomestring", "nomechar", "numreal", "(" }
+    # FIRST(<REPITEM>): { ",", ε }
+    
+    #FOLLOW
+    
+    
+    
     return producoes
 
 def getTabParsing():
@@ -90,11 +125,12 @@ def getTabParsing():
     tabParsing[54][26] = 2  # Estado <BLOCO>, token "begin" -> Produção 2
     tabParsing[55][10] = 3  # Estado <DCLPROC>, token "procedure" -> Produção 22
     tabParsing[55][17] = 4  # Estado <DCLPROC>, token "î" -> Produção 23
+    tabParsing[55][26] = 24
     tabParsing[56][23] = 5  # Estado <DCLCONST>, token "const" -> Produção 2
-    tabParsing[56][17] = 6  # Estado <DCLCONST>, token "î" -> Produção 3
+    tabParsing[56][26] = 24  # Estado <DCLCONST>, token "î" -> Produção 3
     tabParsing[57][22] = 7  # Estado <DCLVAR>, token "declaravariaveis" -> Produção 6
-    tabParsing[57][17] = 8  # Estado <DCLVAR>, token "î" -> Produção 7
-    tabParsing[58][26] = 9  # Estado <CORPO>, token "begin" -> Produção 26
+    tabParsing[57][26] = 24  # Estado <DCLVAR>, token "î" -> Produção 7
+    tabParsing[58][26] = 27  # Estado <CORPO>, token "begin" -> Produção 26
     tabParsing[59][18] = 10  # Estado <TIPO>, token "integer" -> Produção 18
     tabParsing[59][24] = 11  # Estado <TIPO>, token "char" -> Produção 19
     tabParsing[59][5] = 12  # Estado <TIPO>, token "string" -> Produção 20
@@ -120,7 +156,7 @@ def getTabParsing():
     tabParsing[66][25] = 32  # Estado <COMANDO>, token "chamaprocedure" -> Produção 33
     tabParsing[66][0] = 33  # Estado <COMANDO>, token "write" -> Produção 34
     tabParsing[66][18] = 34  # Estado <COMANDO>, token "for" -> Produção 35
-    tabParsing[66][17] = 35  # Estado <COMANDO>, token "î" -> Produção 36
+    tabParsing[66][42] = 24  # Estado <COMANDO>, token "î" -> Produção 36
     tabParsing[67][15] = 36  # Estado <REPCOMANDO>, token "if" -> Produção 27
     tabParsing[67][1] = 37  # Estado <REPCOMANDO>, token "while" -> Produção 27
     tabParsing[67][6] = 38  # Estado <REPCOMANDO>, token "repeat" -> Produção 27
@@ -129,6 +165,7 @@ def getTabParsing():
     tabParsing[67][0] = 41  # Estado <REPCOMANDO>, token "write" -> Produção 27
     tabParsing[67][18] = 42  # Estado <REPCOMANDO>, token "for" -> Produção 27
     tabParsing[67][20] = 43  # Estado <REPCOMANDO>, token "end" -> Produção 28
+    tabParsing[67][19] = 24  # Estado <REPCOMANDO>, token "end" -> Produção 28
     tabParsing[68][16] = 44  # Estado <EXPRESSAO>, token "identificador" -> Produção 43
     tabParsing[68][37] = 45  # Estado <EXPRESSAO>, token "numinteiro" -> Produção 43
     tabParsing[68][36] = 46  # Estado <EXPRESSAO>, token "numreal" -> Produção 43
@@ -214,7 +251,7 @@ def sintatico(token_array):
     # Variável para armazenar o array de tokens (que irá alimentar o sintático)
     tokens = np.array(token_array)
     
-    print(tokens)
+    # print(tokens)
 
     # Obter produções e tabela de parsing
     producoes = getProducoes()
@@ -222,21 +259,24 @@ def sintatico(token_array):
 
     pilha = [51]  # $
 
-    # Empilhar a primeira produção (P0: <PROGRAMA>)
+    print('tokens')
+    print(tokens)
     pilha = np.hstack([producoes[0][:], pilha])
-
     print(pilha)
 
     X = pilha[0]
     a = tokens[0]
 
     while X != 51:  # $
-        print(X)
-        print(a)
-        print(pilha)  # Obrigatório mostrar a pilha a cada iteração
+        print('whiles')
+        print('x',X)
+        print('a',a)
+        print('pilha',pilha)  # Obrigatório mostrar a pilha a cada iteração
         if X == 17:  # Vazio
             pilha = np.delete(pilha, [0])
             X = pilha[0]
+        # elif X == -1:
+        #     pilha = np.delete(pilha, [0])
         else:
             if X <= 52:  # X é terminal
                 if X == a:
