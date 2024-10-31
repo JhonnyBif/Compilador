@@ -2,7 +2,7 @@ import numpy as np
 import re
 import sintatico
 
-with open('exemplo-simples.txt', 'r') as file:
+with open('exemplo01.txt', 'r') as file:
     palavra = file.read()
 
 token_map = {
