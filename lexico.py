@@ -2,7 +2,7 @@ import numpy as np
 import re
 import sintatico
 
-with open('exemplo01.txt', 'r') as file:
+with open('exemplo03.txt', 'r') as file:
     palavra = file.read()
 
 token_map = {
@@ -46,8 +46,8 @@ token_map = {
     '.': 46,
     ',': 47,
     '*': 48,
+    ')': 49,
     '(': 50,
-    ')': 51,
     '-': 52
 }
 

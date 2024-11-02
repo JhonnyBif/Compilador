@@ -1,12 +1,10 @@
 program exemp;
-declaravariaveis contador : integer;
 const receber = integer;
+declaravariaveis contador : integer;
 begin
   write(@Digite um valor de entrada: @);
   read(receber);
-  contador = 0;
   repeat
-    write(@Contador: @, contador);
-    contador = contador + 1;
+    write(@Contador: @, contador)
   until [contador = 5];
 end.

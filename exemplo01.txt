@@ -1,14 +1,13 @@
 program exemp;
-declaravariaveis i : integer;
 const limite = integer;
+declaravariaveis i : integer;
 begin
-  limite = 10
   for [i = 1] to [limite] do begin
     if [i < limite] then begin 
       write(@Valor de i e igual a : @, limite) 
     end 
     else begin 
       write(@Valor de i nao e menor que : @, limite)
-    end;
+    end
   end;
 end.
