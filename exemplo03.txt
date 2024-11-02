@@ -1,13 +1,9 @@
 program exemploWhile;
 procedure meuProcedure begin write(@Procedure chamada!@); end;
-declaravariaveis contador : integer;
-declaravariaveis arrayCount : array [0 .. 4] of integer;
+declaravariaveis contador : integer; arrayCount : array [0 .. 4] of integer;
 begin
-  while [contador < 5] do begin
-    write(@Contador: @, contador);
-  end 
-  else begin 
-    write(@Contato e igual a 5@);
-    chamaprocedure meuProcedure();
+  while [contador < 5 ] do begin
+    write(@Contador: @, contador)
   end;
+    chamaprocedure meuProcedure;
 end.

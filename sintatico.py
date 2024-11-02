@@ -130,10 +130,10 @@ def getTabParsing():
     tabParsing[55][23] = 3   # <DCLCONST> ::= "const" "identificador" "=" <TIPO> ";" <LDCONST>
     tabParsing[55][22] = 7   # <DCLVAR> ::= "declaravariaveis" <LID> ":" <TIPO> ";" <LDVAR>
     tabParsing[55][26] = 27  # <CORPO> ::= "begin" <COMANDO> ";" <REPCOMANDO> "end"
-    tabParsing[55][42] = 27  # <CORPO> ::= î
     
     tabParsing[65][50] = 25  # <DEFPAR> ::= "(" <LID> ":" <TIPO> ";" <LDVAR> ")"
-    tabParsing[65][26] = 24  # <DEFPAR> ::= "í")"
+    tabParsing[65][26] = 26 # <DEFPAR> ::= "(" <LID> ":" <TIPO> ";" <LDVAR> ")"
+    tabParsing[65][22] = 26 # <DEFPAR> ::= "(" <LID> ":" <TIPO> ";" <LDVAR> ")"
     
     tabParsing[66][15] = 30  # <COMANDO> ::= "if" "[" <EXPRESSAO> "]" "then" "begin" <COMANDO> "end" <ELSEPARTE>
     tabParsing[66][1] = 31   # <COMANDO> ::= "while" "[" <EXPRESSAO> "]" "do" "begin" <COMANDO> "end"
@@ -281,11 +281,13 @@ def getTabParsing():
     tabParsing[80][50] = 61  # Estado <EXPSIMP>, token "(" -> Produção 60
     
     tabParsing[69][20] = 70  # <ELSEPARTE> ::= "else" "begin" <COMANDO> "end"
+    tabParsing[69][42] = 70  # <ELSEPARTE> ::= "else" "begin" <COMANDO> "end"
     
     tabParsing[70][16] = 72  # <VARIAVEL> ::= "identificador" <REPVARIAVEL>
     
     tabParsing[71][47] = 73  # <REPVARIAVEL> ::= "," "identificador" <REPVARIAVEL>
     tabParsing[71][49] = 24  # <REPVARIAVEL> ::= "í <REPVARIAVEL>
+    tabParsing[72][42] = 39  
 
     return tabParsing
 
@@ -301,10 +303,10 @@ def sintatico(token_array):
 
     pilha = [51]  # $
 
-    print('tokens')
-    print(tokens)
+    # print('tokens')
+    # print(tokens)
     pilha = np.hstack([producoes[0][:], pilha])
-    print(pilha)
+    # print(pilha)
 
     X = pilha[0]
     a = tokens[0]
@@ -315,9 +317,11 @@ def sintatico(token_array):
             pilha = np.delete(pilha, [0])
             X = pilha[0]
         else:
-            print('pilha',pilha)  # Obrigatório mostrar a pilha a cada iteração
-            print('x',X)
-            print('a',a)
+            # print('pilha',pilha)  # Obrigatório mostrar a pilha a cada iteração
+            pilha_filtrada = [int(x) for x in pilha if x != -1] #AQUI É PRA MOSTRAR SEM OS -1 CASO O CONTRARIO
+            print('pilha filtrada:', pilha_filtrada) #  SOMENTE COMENTAR E DESCOMENTAR A LINHA DE CIMA
+            # print('x',X)
+            # print('a',a)
             if X <= 52:  # X é terminal
                 if X == a:
                     pilha = np.delete(pilha, [0])
