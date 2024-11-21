@@ -291,7 +291,39 @@ def getTabParsing():
 
     return tabParsing
 
-def sintatico(token_array):
+tabela_simbolos = []
+
+def verificar_erro_semantico(nome_variavel, tipo_erro):
+    simbolo = buscar_simbolo(nome_variavel)
+    print('SIMBOLIN E NOMEZIN', simbolo, nome_variavel)
+    if simbolo and simbolo['categoria'] == "constante" and tipo_erro == "atribuição":
+        print(f"Erro semântico: Tentativa de alteração da constante '{nome_variavel}'")
+        return True
+    print('PASSOU HEIN')
+    return False
+
+def adicionar_simbolo(nome, categoria, tipo, nivel):
+    if buscar_simbolo(nome):
+        print(f"Erro semântico: A constante '{nome}' já foi declarada.")
+        return False 
+    else:
+        simbolo = {
+            'nome': nome,
+            'categoria': categoria,
+            'tipo': tipo,
+            'nivel': nivel
+        }
+        tabela_simbolos.append(simbolo)
+        return True
+        
+def buscar_simbolo(nome):
+    print('tabela_simbolos', tabela_simbolos)
+    for simbolo in tabela_simbolos:
+        if simbolo['nome'] == nome:
+            return simbolo
+    return None
+
+def sintatico(token_array, lexemas):
     # Variável para armazenar o array de tokens (que irá alimentar o sintático)
     tokens = np.array(token_array)
     
@@ -310,19 +342,44 @@ def sintatico(token_array):
 
     X = pilha[0]
     a = tokens[0]
-
+    print('lexemas', lexemas)
+    indexWhile = 0
     while X != 51:  # $
-       
         if X == 17 or X == -1:  # Vazio
             pilha = np.delete(pilha, [0])
             X = pilha[0]
         else:
             # print('pilha',pilha)  # Obrigatório mostrar a pilha a cada iteração
-            pilha_filtrada = [int(x) for x in pilha if x != -1] #AQUI É PRA MOSTRAR SEM OS -1 CASO O CONTRARIO
-            print('pilha filtrada:', pilha_filtrada) #  SOMENTE COMENTAR E DESCOMENTAR A LINHA DE CIMA
+            # pilha_filtrada = [int(x) for x in pilha if x != -1] #AQUI É PRA MOSTRAR SEM OS -1 CASO O CONTRARIO
+            # print('pilha filtrada:', pilha_filtrada) #  SOMENTE COMENTAR E DESCOMENTAR A LINHA DE CIMA
             # print('x',X)
             # print('a',a)
             if X <= 52:  # X é terminal
+                # print('tokens',tokens[0])           
+                # if X == 23:
+                #     print('tipo aqui', lexemas[indexWhile + 2])
+                #     nome = lexemas[indexWhile + 1]
+                #     tipo = lexemas[indexWhile + 3]
+                #     if adicionar_simbolo(nome, "constante", tipo, 0):
+                #         print(f'Constante {nome} adicionada à tabela de símbolos')
+                #     else:
+                #         print(f"Erro: A constante {nome} já foi declarada.")
+                if X == 16:
+                    previousLexema = lexemas[indexWhile - 1]
+                    nome = lexemas[indexWhile]
+                    if previousLexema == "const":
+                        tipo = lexemas[indexWhile + 2]
+                        if verificar_erro_semantico(nome, "atribuição"):
+                            print(f"Erro semântico na linha ?: Tentativa de alteração da constante {nome}")
+                            break
+                        if adicionar_simbolo(nome, "constante", tipo, 0):
+                            print(f'Constante {nome} adicionada à tabela de símbolos')
+                            continue
+                        else:
+                            print(f"Erro: A constante {nome} já foi declarada.")
+                    if verificar_erro_semantico(nome, "atribuição"): 
+                        print(f"Erro semântico na linha ?: Tentativa de alteração da constante {nome}")
+                        break
                 if X == a:
                     pilha = np.delete(pilha, [0])
                     tokens = np.delete(tokens, [0])
@@ -337,6 +394,7 @@ def sintatico(token_array):
                 else:
                     print('Error: Unexpected token')
                     break
+                indexWhile += 1   
             else:  # Não terminal
                 if tabParsing[X][a] != 0:
                     producao = producoes[int(tabParsing[X][a]) - 1]

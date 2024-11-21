@@ -1,5 +1,6 @@
 program exemp;
 const limite = integer;
+limite = 10;
 declaravariaveis i : integer;
 begin
   for [i = 1] to [limite] do begin

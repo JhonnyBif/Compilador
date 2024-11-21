@@ -2,7 +2,7 @@ import numpy as np
 import re
 import sintatico
 
-with open('exemplo03.txt', 'r') as file:
+with open('exemplo01.txt', 'r') as file:
     palavra = file.read()
 
 token_map = {
@@ -99,7 +99,7 @@ number = False
 especiais = ['>','=','<','+',']','[',';',':','/','.',',','*',')','(','-']
 espacos = [ ' ', '\t', '\n']
 regex = f"[{''.join(re.escape(e) for e in especiais)}]"
-print(palavra)
+# print(palavra)
 
 for i in range(len(palavra)):
     if palavra[i].__contains__('\n') :
@@ -253,7 +253,7 @@ tokens = np.array(tokens) #converte lista do python para numpy array
 # for i in range(len(tokens)) :
 #     print('Token: '+str(tokens[i]) + ' - Lexema: '+str(lexemas[i]) + ' - Linha:'+str(lines) )
     
-sintatico.sintatico(tokens)   
+sintatico.sintatico(tokens, lexemas)   
 #-----------------------CODIGO ANTIGO--------------------------------
 
  # if lexema == 'program':
