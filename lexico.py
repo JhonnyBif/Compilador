@@ -83,6 +83,7 @@ def process_lexema(lexema, tokens, lexemas, espacos):
                 error('identificadorStartDigit', lines, lexema)
             tokens.append(16)
             lexemas.append(lexema)
+    token_lines.append(lines)
     return ''
 
 lexema = ''
@@ -99,6 +100,7 @@ number = False
 especiais = ['>','=','<','+',']','[',';',':','/','.',',','*',')','(','-']
 espacos = [ ' ', '\t', '\n']
 regex = f"[{''.join(re.escape(e) for e in especiais)}]"
+token_lines = []
 # print(palavra)
 
 for i in range(len(palavra)):
@@ -253,7 +255,7 @@ tokens = np.array(tokens) #converte lista do python para numpy array
 # for i in range(len(tokens)) :
 #     print('Token: '+str(tokens[i]) + ' - Lexema: '+str(lexemas[i]) + ' - Linha:'+str(lines) )
     
-sintatico.sintatico(tokens, lexemas)   
+sintatico.sintatico(tokens, lexemas, token_lines)   
 #-----------------------CODIGO ANTIGO--------------------------------
 
  # if lexema == 'program':

@@ -1,7 +1,6 @@
-program exemp;
-const limite = integer;
-limite = 10;
-declaravariaveis i : integer;
+program limite;
+const a = integer;
+declaravariaveis limite : integer;
 begin
   for [i = 1] to [limite] do begin
     if [i < limite] then begin 
